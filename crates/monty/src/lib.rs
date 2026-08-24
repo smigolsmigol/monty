@@ -31,6 +31,7 @@ mod run;
 mod run_progress;
 mod sorting;
 mod source_map;
+mod str_format;
 mod string_builder;
 mod stringize;
 mod types;

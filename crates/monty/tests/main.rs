@@ -1,5 +1,5 @@
 use monty::MontyRun;
-use monty_types::{CompileOptions, MontyObject};
+use monty_types::{CompileOptions, ExcType, MontyObject};
 
 /// Test we can reuse exec without borrow checker issues.
 #[test]
@@ -26,6 +26,23 @@ fn test_get_interned_string() {
     let r = ex.run_no_limits(vec![]).unwrap();
     let int_value: String = r.as_ref().try_into().unwrap();
     assert_eq!(int_value, "foobar");
+}
+
+/// Replacement fields are synchronous, so an OS-backed attribute cannot yield
+/// to the host and must fail before the call escapes the formatter.
+#[test]
+fn str_format_os_attribute_reports_suspension_limit() {
+    let ex = MontyRun::new(
+        "import os\n'{0.environ}'.format(os)".to_owned(),
+        "test.py",
+        vec![],
+        CompileOptions::default(),
+    )
+    .unwrap();
+
+    let err = ex.run_no_limits(vec![]).unwrap_err();
+    assert_eq!(err.exc_type(), ExcType::NotImplementedError);
+    assert_eq!(err.message(), Some("str.format attribute access cannot suspend"));
 }
 
 /// Test that calling a method on a dataclass in standard execution mode

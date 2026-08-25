@@ -30,9 +30,10 @@ WebAssembly runtimes do.
   are **pre-checked** before allocating: integer multiplication, left
   shift, integer power, sequence repeat (`'x' * n`), replacement
   (`str.replace`, `bytes.replace`), padding (`str.ljust`, `str.center`,
-  `str.zfill`, `bytes.ljust`, …), and f-string formatting
-  (both dynamic width `f"{v:>{w}}"` and dynamic precision on float
-  formats `f"{v:.{p}f}"` / `e` / `%`). The pre-check threshold is 100 KB:
+  `str.zfill`, `bytes.ljust`, …), and string formatting with dynamic width
+  or precision, for both f-strings (`f"{v:>{w}}"`, `f"{v:.{p}f}"`) and
+  `str.format()` (`"{0:>{1}}".format(v, w)`, `"{0:.{1}f}".format(v, p)`).
+  The pre-check threshold is 100 KB:
   estimates above that are checked against the remaining budget and rejected
   with `MemoryError` before allocation when they would exceed it.
 - `bigint.pow(base, exp)` estimates result size as `bits(base) * exp` with

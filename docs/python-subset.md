@@ -26,7 +26,7 @@ the repository, and that directory — not this page — is the source of truth.
 - `try` / `except` / `else` / `finally`, `raise ... from ...`
 - `for`, `while`, `if` / `elif` / `else`, `break`, `continue`, `pass`, `assert`, `global`, `nonlocal`, `return`
 - `with` statements, for files and for classes implementing `__enter__` / `__exit__`
-- f-strings and `str.format()`, including `!r` / `!s` / `!a`, format specs,
+- f-strings and `str.format()`, including `=`, `!r` / `!s` / `!a`, format specs,
   and nested replacement fields
 - `async` / `await`, and `asyncio.run` / `asyncio.gather`
 - `import x`, `import x.y`, `from x import y, z as w`

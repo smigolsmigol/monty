@@ -110,7 +110,7 @@ Each links to the `limitations/` file that owns it, which is where the full acco
   `run` and `gather`, the latter running host calls concurrently.
   `create_task`, `sleep` and everything else do not exist
   ([asyncio.md](https://github.com/pydantic/monty/blob/main/limitations/asyncio.md)).
-- **`str.format_map()`, the `format()` builtin and `%`-formatting are not implemented.**
+- **The `format()` builtin and `%`-formatting are not implemented.**
   `str.format()` and f-strings are supported
   ([format.md](https://github.com/pydantic/monty/blob/main/limitations/format.md)).
 - **Only UTF-8, ASCII, UTF-16 and UTF-32 codecs exist.** `latin-1` and friends raise `LookupError`

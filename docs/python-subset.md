@@ -26,7 +26,8 @@ the repository, and that directory — not this page — is the source of truth.
 - `try` / `except` / `else` / `finally`, `raise ... from ...`
 - `for`, `while`, `if` / `elif` / `else`, `break`, `continue`, `pass`, `assert`, `global`, `nonlocal`, `return`
 - `with` statements, for files and for classes implementing `__enter__` / `__exit__`
-- f-strings, including `=`, `!r` / `!s` / `!a` and format specs
+- f-strings (including the `=` debug form) and `str.format()`, with `!r` / `!s` / `!a`
+  conversions, format specs, and nested replacement fields
 - `async` / `await`, and `asyncio.run` / `asyncio.gather`
 - `import x`, `import x.y`, `from x import y, z as w`
 - Starred unpacking everywhere CPython allows it
@@ -109,7 +110,8 @@ Each links to the `limitations/` file that owns it, which is where the full acco
   `run` and `gather`, the latter running host calls concurrently.
   `create_task`, `sleep` and everything else do not exist
   ([asyncio.md](https://github.com/pydantic/monty/blob/main/limitations/asyncio.md)).
-- **`str.format()` and `%`-formatting are not implemented.** Use f-strings
+- **The `format()` builtin and `%`-formatting are not implemented.**
+  `str.format()` and f-strings are supported
   ([format.md](https://github.com/pydantic/monty/blob/main/limitations/format.md)).
 - **Only UTF-8, ASCII, UTF-16 and UTF-32 codecs exist.** `latin-1` and friends raise `LookupError`
   ([encoding.md](https://github.com/pydantic/monty/blob/main/limitations/encoding.md)).

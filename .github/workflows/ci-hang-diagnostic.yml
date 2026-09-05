@@ -1,0 +1,78 @@
+name: Datatest hang diagnostic
+
+on:
+  push:
+    branches:
+      - codex/ci-hang-824
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  datatest:
+    if: github.repository == 'smigolsmigol/monty'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9
+        with:
+          toolchain: '1.98.1'
+          components: llvm-tools
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14.7'
+
+      - uses: taiki-e/install-action@1ed3272338f573e042a2e6bca3893aa19f43b47a
+        with:
+          tool: cargo-llvm-cov@0.8.5
+
+      - name: Record environment
+        run: |
+          mkdir -p playground
+          {
+            git rev-parse HEAD
+            rustc --version --verbose
+            python -VV
+            cargo llvm-cov --version
+            gdb --version
+            uname -a
+            nproc
+            printf 'Runner image: %s %s\n' "$ImageOS" "$ImageVersion"
+          } | tee playground/environment.log
+
+      - name: Build the coverage-instrumented datatest binary
+        run: |
+          timeout --kill-after=15s 480s cargo llvm-cov run --no-report --locked \
+            -p monty-datatest --features memory-model-checks -- --list \
+            2>&1 | tee playground/build.log
+
+      - name: Run bounded parallel and serial comparisons
+        run: |
+          for attempt in 1 2 3; do
+            python .github/scripts/diagnose_datatest.py \
+              --label "parallel-$attempt" --sudo-gdb -- \
+              target/llvm-cov-target/debug/monty-datatest
+          done
+          python .github/scripts/diagnose_datatest.py \
+            --label serial --sudo-gdb -- \
+            target/llvm-cov-target/debug/monty-datatest --test-threads 1
+
+      - name: Preserve diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: datatest-diagnostic
+          path: |
+            playground/**/*.log
+            playground/**/receipt.json
+          retention-days: 7
+          if-no-files-found: error

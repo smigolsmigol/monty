@@ -35,6 +35,12 @@ jobs:
         with:
           tool: cargo-llvm-cov@0.8.5
 
+      - name: Install the stack-capture debugger
+        timeout-minutes: 3
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends gdb
+
       - name: Record environment
         run: |
           mkdir -p playground
